@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Cliente-Servidor con Consumo de API</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Información de personaje</h1>
+        <div class="form-group">
+            <label for="characterId">ID del personaje:</label>
+            <input type="text" class="form-control" id="characterId">
+        </div>
+        <button type="button" class="btn btn-primary" onclick="getCharacterInfo()">Obtener Información</button>
+        <div id="character-info" class="card mt-4" style="display: none;">
+            <div class="card-body">
+                <h2 class="card-title"></h2>
+                <img class="card-img-top" alt="Imagen del personaje">
+                <p class="card-text">Género: </p>
+                <p class="card-text">Especie: </p>
+                <p class="card-text">Origen: </p>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <script>
+        function getCharacterInfo() {
+            const characterIdInput = $("#characterId");
+            const characterId = characterIdInput.val();
+
+            const url = "http://localhost:3000";
+
+            // Realizar una solicitud GET al servidor
+            $.get(url+`/character-info/${characterId}`, function(data) {
+                const characterInfo = $("#character-info");
+
+                console.log(data);
+
+                if (data.error) {
+                    characterInfo.hide();
+                    alert(data.error);
+                } else {
+                    characterInfo.show();
+                    characterInfo.find(".card-title").text(data.name);
+                    characterInfo.find(".card-img-top").attr("src", data.image);
+                    characterInfo.find(".card-text:eq(0)").append(data.gender);
+                    characterInfo.find(".card-text:eq(1)").append(data.species);
+                    characterInfo.find(".card-text:eq(2)").append(data.origin.name);
+                }
+            });
+        }
+    </script>
+</body>
+</html>
